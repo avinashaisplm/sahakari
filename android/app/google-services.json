@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "982370584675",
+    "project_id": "aisplmsahakari",
+    "storage_bucket": "aisplmsahakari.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982370584675:android:38df5852aa506d30a15056",
+        "android_client_info": {
+          "package_name": "io.ionic.sahakari"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnwoIGodt0agrwt0-qIzY89e3DY3hfouI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
