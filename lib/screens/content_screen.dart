@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sahakari/utils/shared_prefs.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 import 'package:http/http.dart' as http;
 class ContentScreen extends StatefulWidget {
   const ContentScreen({super.key});
@@ -14,13 +17,20 @@ class ContentScreen extends StatefulWidget {
 }
 
 class _ContentScreenState extends State<ContentScreen> {
+  _SupportState _supportState = _SupportState.unknown;
   late final WebViewController controller;
   var loadingPercentage = 0;
-
+  String _authorized = 'Not Authorized';
+  bool _isAuthenticating = false;
   @override
   void initState() {
     registerFCM();
     super.initState();
+    LocalAuthPlatform.instance.isDeviceSupported().then(
+          (bool isSupported) => setState(() => _supportState   = isSupported
+          ? _SupportState.supported
+          : _SupportState.unsupported),
+    );
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -40,10 +50,10 @@ class _ContentScreenState extends State<ContentScreen> {
           },
         ),
       )
-      ..addJavaScriptChannel('unlock', onMessageReceived: (args){
-if(args.message=='')
+      ..addJavaScriptChannel('unlock', onMessageReceived: (args) async {
+if(args.message=='xee')
   {
-
+    await _authenticate();
   }
     })
       ..loadRequest(
@@ -110,4 +120,43 @@ if(args.message=='')
     );
 
   }
+
+  Future<void> _authenticate() async {
+    bool authenticated = false;
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await LocalAuthPlatform.instance.authenticate(
+        localizedReason: 'Let OS determine authentication method',
+        authMessages: <AuthMessages>[const AndroidAuthMessages()],
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+      });
+    } on PlatformException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - ${e.message}';
+      });
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    setState(
+            () => _authorized = authenticated ? 'Authorized' : 'Not Authorized');
+  }
+}
+
+enum _SupportState {
+  unknown,
+  supported,
+  unsupported,
 }
