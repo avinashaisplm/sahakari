@@ -40,12 +40,20 @@ class _ContentScreenState extends State<ContentScreen> {
           },
         ),
       )
+      ..addJavaScriptChannel('unlock', onMessageReceived: (args){
+if(args.message=='')
+  {
+
+  }
+    })
       ..loadRequest(
         //Uri.parse('https://bolkirapp.azurewebsites.net/register'),
         Uri.parse('https://sahakariblazortest.azurewebsites.net/'),
       );
-
   }
+
+
+
 
   Future< bool> registerFCM() async
   {

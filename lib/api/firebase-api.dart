@@ -21,14 +21,13 @@ class FirebaseAPI
     {
       return;
     }
-    navigatorKey.currentState?.pushNamed(ContentScreen.routeName,  arguments: message,);
+ //navigatorKey.currentState?.pushNamed(ContentScreen.routeName,  arguments: message,);
   }
 
   Future initPushNotifications() async
   {
     FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
-   // FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
     FirebaseMessaging.onMessage.listen(handleMessage);
   }
 }
-
+//FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
